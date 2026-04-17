@@ -1,71 +1,99 @@
 def gatherData():
-    #Check for switch or router
-    while True:
-        device = input("Are you configuring a switch or a router? ")
-        if device.strip().lower() == "switch" or device.strip().lower() == "router":
-            break
-        else:
-            print("Invalid device entered. Please enter either router or switch.")
-    # ROUTER CONFIGURATION
-    if device.strip().lower() == "router":
-        hostname = input("What is the hostname for the router? ")
-        secret = input("What is the Priv Exec secret? ")
-        while True:
-            lookup = input("Disable DNS lookup? y/n ")
-            if lookup == "y":
-                lookup = True
-                break
-            elif lookup == "n":
-                lookup = False
-                break
-            else:
-                print("Invalid input entered. Enter either y or n. ")
-        print(lookup)
-        username = input("What is the username? ")
-        password = input("What is the password? ")
-        consolePass = input("Enter console line password or enter 'local' to enable login local: ")
-        vtyPass = input("Enter vty line password or enter 'local' to enable login local: ")
-        while True:
-            ssh = input("Enable SSH? y/n ")
-            if ssh == "y" or ssh == "n":
-                break
-            else:
-                print("Invalid input entered. Enter either y or n. ")
-        while True:
-            encrypt = input("Encrypt passwords? y/n ")
-            if encrypt == "y" or lookup == "n":
-                break
-            else:
-                print("Invalid input entered. Enter either y or n. ")
-        banner = input("What is the banner? ")
+    # DEFINE EMPTY DICTIONARY
+    Settings = {}
+    
+    # CONFIGURATION
+    
+    hostname = input("What is the hostname? ")
+    secret = input("What is the Priv Exec secret? ")
+    banner = input("What is the banner? ")
+    username = input("What is the username? ")
+    password = input("What is the password? ")
+    consolePass = input("Enter console line password or enter 'local' to enable login local: ")
+    vtyPass = input("Enter vty line password or enter 'local' to enable login local: ")
 
-    # SWITCH CONFIGURATION
-    if device.strip().lower() == "switch":
-        hostname = input("What is the hostname for the switch? ")
-        secret = input("What is the Priv Exec secret? ")
-        while True:
-            lookup = input("Disable DNS lookup? y/n ")
-            if lookup == "y" or lookup == "n":
-                break
-            else:
-                print("Invalid input entered. Enter either y or n. ")
-        username = input("What is the username? ")
-        password = input("What is the password? ")
-        consolePass = input("Enter console line password or enter 'local' to enable login local: ")
-        vtyPass = input("Enter vty line password or enter 'local' to enable login local: ")
-        while True:
-            ssh = input("Enable SSH? y/n ")
-            if ssh == "y" or lookup == "n":
-                break
-            else:
-                print("Invalid input entered. Enter either y or n. ")
-        while True:
-            encrypt = input("Encrypt passwords? y/n ")
-            if encrypt == "y" or lookup == "n":
-                break
-            else:
-                print("Invalid input entered. Enter either y or n. ")
-        banner = input("What is the banner? ")
-gatherData()
-#def buildConfig() -> config(str):
+    # ASSIGN GATHERED VALUES TO DICTIONARY
+    Settings["hostname"] = hostname
+    Settings["secret"] = secret
+    Settings["banner"] = banner
+    Settings["username"] = username
+    Settings["password"] = password
+    Settings["consolePass"] = consolePass
+    Settings["vtyPass"] = vtyPass
+
+    
+    # RETURN DICTIONARY
+    return Settings
+    
+
+
+    
+
+
+def buildConfig(settings) :
+    
+    # BUILD CONFIG FILE
+    config = f'''
+en
+conf t
+no ip domain-lookup
+service password-encryption
+hostname {settings["hostname"]}
+enable secret {settings["secret"]}
+banner motd # {settings["banner"]} #
+username {settings["username"]} password {settings["password"]}
+
+'''
+    
+    # LINE CONSOLE CONFIG
+    # CHECK FOR LOCAL LOGIN
+    if settings["consolePass"] == "local":
+        consoleConfig = f'''
+line con 0
+login local
+logging sync
+exit
+
+        '''
+    else :
+        consoleConfig = f'''
+line con 0
+password {settings["consolePass"]}
+login
+logging sync
+exit
+
+        '''
+    config = config + consoleConfig
+
+    # VTY LINE CONFIG
+    # CHECK FOR LOCAL LOGIN
+    if settings["vtyPass"] == "local":
+        vtyConfig = f'''
+line vty 0 15
+login local
+logging sync
+transport input ssh
+exit
+
+        '''
+    else :
+        vtyConfig = f'''
+line vty 0 15
+password {settings["vtyPass"]}
+login
+logging sync
+transport input ssh
+exit
+
+        '''
+    config = config + vtyConfig
+    return config
+
+def makeFile(string):
+    fileName = input("What is the config file name? ") + ".txt"
+    with open(fileName, "w") as file:
+        file.write(string)
+
+makeFile(buildConfig(gatherData()))
     
