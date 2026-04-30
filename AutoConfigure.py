@@ -1,6 +1,10 @@
+#This program will create a text file containing a Cisco IOS Router Configuration. To apply configuration file to Cisco IOS Router, copy the contents of the file and paste them into the router terminal.
 import re
+#Create a regex pattern to detect IPv4 addresses
 ipv4_pattern = r"^(?:0|[1-9]\d?|1\d{2}|2[0-4]\d|25[0-5])(?:\.(?:0|[1-9]\d?|1\d{2}|2[0-4]\d|25[0-5])){3}$"
 
+
+#FUNCTION TO GATHER INPUT FOR SETTINGS
 def gatherData():
     # DEFINE EMPTY DICTIONARY
     Settings = {}
@@ -67,7 +71,7 @@ def gatherData():
                 break
             else:
                 print("ERROR: Input does not match the format for a subnet mask.")
-        
+        #ASSIGN DHCP VALUES TO THE DICTIONARY
         Settings["dhcpPool" + str(i)] = dhcpPool
         Settings["excludeStart" + str(i)] = excludeStart
         Settings["excludeEnd" + str(i)] = excludeEnd
@@ -93,7 +97,7 @@ def gatherData():
 
     
 
-
+#FUNCTION THAT TAKES A DICTIONARY TO BUILD CONFIGRATION STRING
 def buildConfig(settings) :
     
     # BUILD CONFIG FILE
@@ -128,6 +132,7 @@ logging sync
 exit
 
         '''
+    #APPEND TO CONFIGURATION
     config = config + consoleConfig
 
     # VTY LINE CONFIG
@@ -151,6 +156,7 @@ transport input ssh
 exit
 
         '''
+    #APPEND TO CONFIGURATION
     config = config + vtyConfig
 
     dhcpNumber = 0
@@ -166,6 +172,7 @@ default-router {settings["defaultRouter"+str(dhcpNumber)]}
     '''
             #DHCP CONFIGURATION
             dhcpNumber += 1
+            #APPEND TO CONFIGURATION
             config = config + dhcpConfig
         else:
             break
