@@ -28,56 +28,57 @@ def gatherData():
             break
         else:
             print("ERROR: Invalid input detected. Please enter either 'y' or 'n'. ")
-    while True:
-            try:
-                while True:
-                    dhcpNumber = int(input("How many DHCP Pools are you configuring? "))
-                    if dhcpNumber <= 0:
-                        print("ERROR: Invalid input detected. Enter a number greater than 0. ")
-                    else:
-                          break
-                
-                break
-            except ValueError:
-                    print("ERROR: Invalid input detected. Enter an integer. ")
-    for i in range(dhcpNumber):
-        dhcpPool = input("What is the name of the DHCP Pool? ")
+    if dhcp == True:
         while True:
-            excludeStart = input("Where should the excluded address start? (xxx.xxx.xxx.xxx)")
-            if re.fullmatch(ipv4_pattern,excludeStart):
-                break
-            else:
-                print("ERROR: Input does not match the format for an ipv4 address.")
-        while True:
-            excludeEnd = input("Where should the excluded address end? (xxx.xxx.xxx.xxx)")
-            if re.fullmatch(ipv4_pattern,excludeEnd):
-                break
-            else:
-                print("ERROR: Input does not match the format for an ipv4 address.")
-        while True:
-            defaultRouter = input("What is the default router? (xxx.xxx.xxx.xxx)")
-            if re.fullmatch(ipv4_pattern,defaultRouter):
-                break
-            else:
-                print("ERROR: Input does not match the format for an ipv4 address.")
-        while True:
-            network = input("What is the network address? (xxx.xxx.xxx.xxx)")
-            subnet = input("What is the subnet mask? (xxx.xxx.xxx.xxx)")
-            if re.fullmatch(ipv4_pattern,network):
-                break
-            else:
-                print("ERROR: Input does not match the format for an ipv4 address.")
-            if re.fullmatch(ipv4_pattern,subnet):
-                break
-            else:
-                print("ERROR: Input does not match the format for a subnet mask.")
-        #ASSIGN DHCP VALUES TO THE DICTIONARY
-        Settings["dhcpPool" + str(i)] = dhcpPool
-        Settings["excludeStart" + str(i)] = excludeStart
-        Settings["excludeEnd" + str(i)] = excludeEnd
-        Settings["defaultRouter" + str(i)] = defaultRouter
-        Settings["network" + str(i)] = network
-        Settings["subnet" + str(i)] = subnet
+                try:
+                    while True:
+                        dhcpNumber = int(input("How many DHCP Pools are you configuring? "))
+                        if dhcpNumber <= 0:
+                            print("ERROR: Invalid input detected. Enter a number greater than 0. ")
+                        else:
+                            break
+                    
+                    break
+                except ValueError:
+                        print("ERROR: Invalid input detected. Enter an integer. ")
+        for i in range(dhcpNumber):
+            dhcpPool = input("What is the name of the DHCP Pool? ")
+            while True:
+                excludeStart = input("Where should the excluded address start? (xxx.xxx.xxx.xxx)")
+                if re.fullmatch(ipv4_pattern,excludeStart):
+                    break
+                else:
+                    print("ERROR: Input does not match the format for an ipv4 address.")
+            while True:
+                excludeEnd = input("Where should the excluded address end? (xxx.xxx.xxx.xxx)")
+                if re.fullmatch(ipv4_pattern,excludeEnd):
+                    break
+                else:
+                    print("ERROR: Input does not match the format for an ipv4 address.")
+            while True:
+                defaultRouter = input("What is the default router? (xxx.xxx.xxx.xxx)")
+                if re.fullmatch(ipv4_pattern,defaultRouter):
+                    break
+                else:
+                    print("ERROR: Input does not match the format for an ipv4 address.")
+            while True:
+                network = input("What is the network address? (xxx.xxx.xxx.xxx)")
+                subnet = input("What is the subnet mask? (xxx.xxx.xxx.xxx)")
+                if re.fullmatch(ipv4_pattern,network):
+                    break
+                else:
+                    print("ERROR: Input does not match the format for an ipv4 address.")
+                if re.fullmatch(ipv4_pattern,subnet):
+                    break
+                else:
+                    print("ERROR: Input does not match the format for a subnet mask.")
+            #ASSIGN DHCP VALUES TO THE DICTIONARY
+            Settings["dhcpPool" + str(i)] = dhcpPool
+            Settings["excludeStart" + str(i)] = excludeStart
+            Settings["excludeEnd" + str(i)] = excludeEnd
+            Settings["defaultRouter" + str(i)] = defaultRouter
+            Settings["network" + str(i)] = network
+            Settings["subnet" + str(i)] = subnet
 
     # ASSIGN GATHERED VALUES TO DICTIONARY
     Settings["hostname"] = hostname
